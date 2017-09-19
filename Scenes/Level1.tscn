@@ -1,13 +1,55 @@
-[gd_scene load_steps=13 format=1]
+[gd_scene load_steps=18 format=1]
 
-[ext_resource path="res://Objetos/Nave.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Objetos/SpawMeteoro.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Objetos/Power_double.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Objetos/Power_speed.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Sprites/PNG/Effects/star1.png" type="Texture" id=5]
-[ext_resource path="res://Sprites/PNG/Effects/star2.png" type="Texture" id=6]
-[ext_resource path="res://Fonts/spaceMono/ScoreFonts.fnt" type="BitmapFont" id=7]
-[ext_resource path="res://Sprites/PNG/UI/playerLife1_orange.png" type="Texture" id=8]
+[ext_resource path="res://Sprites/1px.png" type="Texture" id=1]
+[ext_resource path="res://Fonts/spaceMono/ScoreFonts.fnt" type="BitmapFont" id=2]
+[ext_resource path="res://Objetos/Nave.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Objetos/SpawMeteoro.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Objetos/Power_double.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Objetos/Power_speed.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Sprites/PNG/Effects/star1.png" type="Texture" id=7]
+[ext_resource path="res://Sprites/PNG/Effects/star2.png" type="Texture" id=8]
+[ext_resource path="res://Sprites/PNG/UI/playerLife1_orange.png" type="Texture" id=9]
+[ext_resource path="res://Objetos/inimigos/path_inimigo.tscn" type="PackedScene" id=10]
+
+[sub_resource type="GDScript" id=5]
+
+resource/name = "pauser"
+script/source = "extends CanvasLayer
+
+
+
+func _ready():
+	set_process_input(true)
+	pass
+func _input(event):
+	if event.is_action_pressed(\"pause\"):
+		get_tree().set_pause(!get_tree().is_paused())
+	if get_tree().is_paused():
+		get_node(\"Label\").show()
+		get_node(\"preto_branco\").show()
+	else :
+		get_node(\"Label\").hide()	
+		get_node(\"preto_branco\").hide()
+	"
+
+[sub_resource type="CanvasItemShader" id=6]
+
+_code = {
+"fragment": "vec4 pxTela = vec4(texscreen(SCREEN_UV),1);
+float media = (pxTela.r + pxTela.g + pxTela.b) / 3;
+COLOR = vec4(media,media,media,1);
+",
+"fragment_ofs": 0,
+"light": "",
+"light_ofs": 0,
+"vertex": "",
+"vertex_ofs": 0
+}
+
+[sub_resource type="CanvasItemMaterial" id=7]
+
+shader/shader = SubResource( 6 )
+shader/shading_mode = 0
 
 [sub_resource type="GDScript" id=1]
 
@@ -89,11 +131,60 @@ offset = Vector2( 0, 0 )
 rotation = 0.0
 scale = Vector2( 1, 1 )
 
-[node name="Nave" parent="." instance=ExtResource( 1 )]
+[node name="pauser" type="CanvasLayer" parent="."]
+
+process/pause_mode = 2
+editor/display_folded = true
+layer = 11
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+script/script = SubResource( 5 )
+
+[node name="preto_branco" type="TextureFrame" parent="pauser"]
+
+visibility/visible = false
+material/material = SubResource( 7 )
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 645.0
+margin/bottom = 486.0
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="pauser"]
+
+visibility/visible = false
+anchor/left = 3
+anchor/top = 3
+anchor/right = 3
+anchor/bottom = 3
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 80.0
+margin/top = 48.0
+margin/right = -58.0
+margin/bottom = 9.0
+custom_fonts/font = ExtResource( 2 )
+text = "Paused"
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="Nave" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 320, 416 )
 
-[node name="SpawMeteoro" parent="." instance=ExtResource( 2 )]
+[node name="SpawMeteoro" parent="." instance=ExtResource( 4 )]
 
 [node name="Camera" type="Camera2D" parent="."]
 
@@ -115,11 +206,11 @@ drag_margin/right = 0.2
 drag_margin/bottom = 0.2
 script/script = SubResource( 1 )
 
-[node name="Power_double" parent="." instance=ExtResource( 3 )]
+[node name="Power_double" parent="." instance=ExtResource( 5 )]
 
 transform/pos = Vector2( 550.012, 420.786 )
 
-[node name="Power_speed" parent="." instance=ExtResource( 4 )]
+[node name="Power_speed" parent="." instance=ExtResource( 6 )]
 
 transform/pos = Vector2( 75.2423, 431.669 )
 
@@ -139,7 +230,6 @@ scroll/ignore_camera_zoom = false
 
 [node name="estrelas" type="ParallaxLayer" parent="ParallaxBackground"]
 
-editor/display_folded = true
 visibility/opacity = 0.2
 motion/scale = Vector2( 0.8, 0.8 )
 motion/offset = Vector2( 0, 0 )
@@ -150,317 +240,317 @@ script/script = SubResource( 2 )
 
 transform/pos = Vector2( 60.4821, 52.4047 )
 transform/rot = -24.8815
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 2" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 292.818, 88.2774 )
 transform/rot = -54.8267
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela105" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 243.13, 361.034 )
 transform/rot = -54.8267
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela103" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 530.794, 244.071 )
 transform/rot = -54.8267
 transform/scale = Vector2( 0.999999, 1 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela106" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 602.664, 385.05 )
 transform/rot = -54.8267
 transform/scale = Vector2( 0.999999, 1 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela106 2" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 34.4804, 441.326 )
 transform/rot = -54.8267
 transform/scale = Vector2( 0.999999, 1 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 242.803, 48.778 )
 transform/rot = -13.5882
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela13 2" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 164.305, 310.997 )
 transform/rot = -13.5882
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela133" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 182.433, 435.202 )
 transform/rot = -13.5882
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela11 2" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 422.053, 223.117 )
 transform/rot = -13.5882
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 8" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 454.591, 57.2525 )
 transform/rot = -13.5882
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1010" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 376.093, 319.471 )
 transform/rot = -13.5882
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1014" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 546.14, 406.535 )
 transform/rot = -13.5882
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela109" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 599.464, 38.8364 )
 transform/rot = -13.5882
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela2" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 220.643, 166.23 )
 transform/rot = 13.3084
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 3" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 457.424, 138.351 )
 transform/rot = 31.5114
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela105 2" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 358.967, 409.23 )
 transform/rot = 31.5114
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela104" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 608.63, 137.083 )
 transform/rot = 31.5114
 transform/scale = Vector2( -1.82649, 1 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela106 3" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 21.3927, 117.383 )
 transform/rot = 31.5114
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1064" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 115.193, 456.784 )
 transform/rot = 31.5114
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela105 3" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 500.856, 449.265 )
 transform/rot = 31.5114
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela5" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 302.637, 141.853 )
 transform/rot = -30.7388
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela13" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 243.426, 449.183 )
 transform/rot = -30.7388
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela12" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 538.393, 116.621 )
 transform/rot = -30.7388
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela13 4" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 406.775, 453.628 )
 transform/rot = -30.7388
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela11" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 506.614, 303.829 )
 transform/rot = -30.7388
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela16" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 612.483, 438.625 )
 transform/rot = -30.7388
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 507.609, 168.504 )
 transform/rot = -22.0231
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela14" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 46.7741, 308.995 )
 transform/rot = -22.0231
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela13 3" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 435.927, 412.546 )
 transform/rot = -22.0231
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela6" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 37.314, 222.436 )
 transform/rot = -22.0231
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 9" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 271.137, 218.246 )
 transform/rot = -8.50541
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela7" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 113.465, 238.957 )
 transform/rot = 22.7733
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela15" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 335.309, 447.352 )
 transform/rot = 22.7733
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 4" type="Sprite" parent="ParallaxBackground/estrelas"]
 
-transform/pos = Vector2( 314.979, 261.131 )
+transform/pos = Vector2( 320, 256 )
 transform/rot = 22.7733
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela8" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 193.345, 235.532 )
 transform/rot = 7.37735
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela15 2" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 154.976, 376.861 )
 transform/rot = 7.37735
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 5" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 430.296, 292.591 )
 transform/rot = 7.37735
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela106 4" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 561.48, 348.195 )
 transform/rot = 7.37735
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela9" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 153.053, 37.6976 )
 transform/rot = -21.6409
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 10" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 364.841, 46.1721 )
 transform/rot = -21.6409
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1012" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 282.241, 314.542 )
 transform/rot = -21.6409
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1011" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 615.18, 211.238 )
 transform/rot = -21.6409
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1013" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 76.4394, 379.178 )
 transform/rot = -21.6409
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela4" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 103.494, 142.558 )
 transform/rot = 51.3498
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 7" type="Sprite" parent="ParallaxBackground/estrelas"]
 
-transform/pos = Vector2( 342.68, 202.405 )
+transform/pos = Vector2( 384, 256 )
 transform/rot = 51.3498
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela3" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 172.997, 109.72 )
 transform/rot = -24.7435
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 6" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 384.785, 118.194 )
 transform/rot = 2.19636
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1010 2" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 306.287, 380.413 )
 transform/rot = 2.19636
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela108" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 531.93, 56.6089 )
 transform/rot = 2.19636
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela110" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 451.16, 361.997 )
 transform/rot = 2.19636
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela107" type="Sprite" parent="ParallaxBackground/estrelas"]
 
 transform/pos = Vector2( 616.58, 286.351 )
 transform/rot = 2.19636
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrelasMidle" type="ParallaxLayer" parent="ParallaxBackground"]
 
@@ -476,385 +566,385 @@ script/script = SubResource( 2 )
 transform/pos = Vector2( 487.974, 43.1516 )
 transform/rot = -24.8815
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 2" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 79.9973, 173.406 )
 transform/rot = -54.8267
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela105" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 30.3091, 446.162 )
 transform/rot = -54.8267
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela103" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 317.974, 329.199 )
 transform/rot = -54.8267
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela111" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 92.1988, 42.3539 )
 transform/rot = -54.8267
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela112" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 40.3816, 25.6983 )
 transform/rot = -54.8267
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela106" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 389.843, 470.178 )
 transform/rot = -54.8267
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela106 2" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 461.972, 432.073 )
 transform/rot = -54.8267
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 29.9823, 133.906 )
 transform/rot = -13.5882
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela13 2" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 591.797, 301.744 )
 transform/rot = -13.5882
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela133" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 609.925, 425.949 )
 transform/rot = -13.5882
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela11 2" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 209.232, 308.245 )
 transform/rot = -13.5882
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 8" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 241.77, 142.381 )
 transform/rot = -13.5882
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1010" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 163.272, 404.599 )
 transform/rot = -13.5882
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1014" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 303.782, 464.398 )
 transform/rot = -13.5882
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela109" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 386.643, 123.965 )
 transform/rot = -13.5882
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela2" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 7.82233, 251.358 )
 transform/rot = 13.3084
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 3" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 244.603, 223.479 )
 transform/rot = 31.5114
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela105 2" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 143.874, 455.733 )
 transform/rot = 31.5114
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela104" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 395.809, 222.211 )
 transform/rot = 31.5114
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela106 3" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 448.885, 108.13 )
 transform/rot = 31.5114
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1064" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 542.685, 447.531 )
 transform/rot = 31.5114
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela105 3" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 334.813, 57.9426 )
 transform/rot = 31.5114
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela5" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 89.8163, 226.981 )
 transform/rot = -30.7388
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela13" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 71.3191, 92.0145 )
 transform/rot = -30.7388
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela12" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 325.572, 201.749 )
 transform/rot = -30.7388
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela13 4" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 252.093, 80.4823 )
 transform/rot = -30.7388
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela11" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 293.793, 388.957 )
 transform/rot = -30.7388
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela16" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 423.72, 51.8466 )
 transform/rot = -30.7388
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 294.788, 253.632 )
 transform/rot = -22.0231
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela14" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 474.266, 299.742 )
 transform/rot = -22.0231
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela13 3" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 234.21, 25.7676 )
 transform/rot = -22.0231
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela6" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 464.806, 213.183 )
 transform/rot = -22.0231
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 9" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 58.3163, 303.374 )
 transform/rot = -8.50541
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela7" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 540.957, 229.704 )
 transform/rot = 22.7733
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela15" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 151.182, 93.2986 )
 transform/rot = 22.7733
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 4" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 102.158, 346.259 )
 transform/rot = 22.7733
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela8" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 620.837, 226.279 )
 transform/rot = 7.37735
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela15 2" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 582.468, 367.608 )
 transform/rot = 7.37735
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 5" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 217.475, 377.719 )
 transform/rot = 7.37735
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela106 4" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 348.659, 433.323 )
 transform/rot = 7.37735
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela9" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 580.545, 28.4445 )
 transform/rot = -21.6409
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 10" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 152.02, 131.3 )
 transform/rot = -21.6409
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1012" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 69.4203, 399.67 )
 transform/rot = -21.6409
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1011" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 402.359, 296.367 )
 transform/rot = -21.6409
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1015" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 172.883, 46.5338 )
 transform/rot = -21.6409
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1013" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 503.931, 369.925 )
 transform/rot = -21.6409
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela4" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 530.986, 133.305 )
 transform/rot = 51.3498
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 7" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 129.859, 287.533 )
 transform/rot = 51.3498
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela3" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 600.489, 100.467 )
 transform/rot = -24.7435
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela10 6" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 171.964, 203.322 )
 transform/rot = 2.19636
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela1010 2" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 93.4663, 465.541 )
 transform/rot = 2.19636
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela108" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 319.109, 141.737 )
 transform/rot = 2.19636
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela110" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 238.339, 447.125 )
 transform/rot = 2.19636
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrela107" type="Sprite" parent="ParallaxBackground/estrelasMidle"]
 
 transform/pos = Vector2( 403.759, 371.48 )
 transform/rot = 2.19636
 transform/scale = Vector2( 0.6, 0.6 )
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
 
 [node name="estrelinhas" type="ParallaxLayer" parent="ParallaxBackground"]
 
@@ -868,477 +958,478 @@ script/script = SubResource( 2 )
 
 transform/pos = Vector2( 68.9999, 63.9999 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12 5" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 346.25, 164.211 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1210 2" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 494.896, 127.467 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite126" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 31.6161, 377.936 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite128 5" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 92.3824, 192.604 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1286" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 28.6397, 244.203 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1287 2" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 281.113, 314.527 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12873" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 439.78, 204.295 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12879" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 588.426, 167.551 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12876 3" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 466.503, 332.899 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite128764" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 384.664, 15.5647 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite128765" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 232.678, 32.2665 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 180, 69.9999 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12 3" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 422.39, 147.655 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1210 4" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 605.895, 133.467 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite124" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 23.0027, 29.9156 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite128 2" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 203.382, 198.604 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1283" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 208.393, 323.867 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1287" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 193.21, 449.711 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1288" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 519.192, 234.662 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1289" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 577.502, 338.899 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1290" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 495.664, 21.5647 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1291" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 343.677, 38.2665 )
 transform/rot = -26.7546
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite2" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 344.999, 86.9998 )
 transform/rot = 36.371
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite3" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 541.661, 108.465 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite4" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 577.999, 66.9999 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite5" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 435.999, 27.9999 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite6" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 269.999, 39.9999 )
 transform/rot = -16.5614
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite7" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 32.5358, 115.277 )
 transform/rot = -23.2576
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite8" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 144, 162 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12 4" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 421.25, 262.211 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1210" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 569.895, 225.467 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite125" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 280.954, 267.221 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite128 3" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 167.382, 290.604 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1284" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 172.393, 415.867 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1287 4" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 356.113, 412.527 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12875" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 514.78, 302.295 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12876 2" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 541.503, 430.899 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite128763" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 459.664, 113.565 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite128765 2" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 307.677, 130.266 )
 transform/rot = -20.7487
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite9" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 127.662, 30.5596 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12 2" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 474.249, 221.211 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1210 3" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 622.895, 184.467 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite123" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 333.954, 226.221 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite128" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 220.382, 249.604 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite129" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 225.393, 374.867 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite130" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 409.112, 371.527 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite131" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 567.78, 261.295 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite132" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 594.502, 389.899 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite133" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 512.664, 72.5646 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite134" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 556.799, 32.7568 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite11" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 54.1606, 175.415 )
 transform/rot = -18.0916
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12 6" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 331.41, 275.625 )
 transform/rot = -18.0916
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite127" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 94.1242, 364.122 )
 transform/rot = -18.0916
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite128 4" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 77.5432, 304.018 )
 transform/rot = -18.0916
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1285" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 82.5537, 429.282 )
 transform/rot = -18.0916
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite1287 3" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 266.273, 425.942 )
 transform/rot = -18.0916
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12874" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 424.941, 315.71 )
 transform/rot = -18.0916
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12876" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 451.663, 444.314 )
 transform/rot = -18.0916
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12877" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 369.825, 126.979 )
 transform/rot = -18.0916
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12878" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 217.838, 143.681 )
 transform/rot = -18.0916
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite10" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 111, 112 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite12" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 388.25, 212.211 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite21" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 536.896, 175.467 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite13" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 272.561, 194.665 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite14" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 134.382, 240.604 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite15" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 139.393, 365.867 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite16" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 323.113, 362.527 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite17" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 382.333, 454.871 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite21 2" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 630.426, 215.551 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite18" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 508.503, 380.899 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite19" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 426.664, 63.5646 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="Sprite20" type="Sprite" parent="ParallaxBackground/estrelinhas"]
 
 transform/pos = Vector2( 274.677, 80.2664 )
 transform/scale = Vector2( 0.33, 0.33 )
-texture = ExtResource( 6 )
+texture = ExtResource( 8 )
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
+editor/display_folded = true
 layer = 10
 offset = Vector2( 0, 0 )
 rotation = 0.0
@@ -1354,7 +1445,7 @@ margin/left = 405.0
 margin/top = 0.0
 margin/right = 640.0
 margin/bottom = 57.0
-custom_fonts/font = ExtResource( 7 )
+custom_fonts/font = ExtResource( 2 )
 text = "0000"
 align = 2
 valign = 1
@@ -1367,6 +1458,8 @@ script/script = SubResource( 3 )
 
 transform/pos = Vector2( 11.0264, 14.7018 )
 script/script = SubResource( 4 )
-textura = ExtResource( 8 )
+textura = ExtResource( 9 )
+
+[node name="path_inimigo" parent="." instance=ExtResource( 10 )]
 
 
